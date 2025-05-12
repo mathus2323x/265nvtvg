@@ -1,0 +1,411 @@
+<!DOCTYPE html> 
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Banco Digital Ultra</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --cor1: #ff6a00;
+      --cor2: #ff0080;
+      --cor3: #00ffe0;
+      --bg-dark: #0e0e0e;
+      --bg-card: #1a1a1a;
+      --text: #fff;
+      --text-light: #aaa;
+    }
+    * {
+      margin: 0; padding: 0; box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+    }
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text);
+      overflow: hidden;
+    }
+    .bg-animated {
+      position: fixed; top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: linear-gradient(270deg, var(--cor1), var(--cor2), var(--cor3));
+      background-size: 600% 600%;
+      animation: bgmove 20s ease infinite;
+      z-index: -1;
+      opacity: 0.07;
+    }
+    @keyframes bgmove {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    .login-container, .dashboard {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+    .login-box {
+      background: var(--bg-card);
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 0 30px rgba(255,106,0,0.3);
+      text-align: center;
+      width: 320px;
+    }
+    .login-box h1 {
+      color: var(--cor1);
+      margin-bottom: 20px;
+    }
+    .login-box input {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border: none;
+      border-radius: 10px;
+      background: #2c2c2c;
+      color: #fff;
+    }
+    .login-box button {
+      width: 100%;
+      padding: 12px;
+      background: var(--cor1);
+      border: none;
+      color: #fff;
+      font-weight: bold;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .login-box button:hover {
+      background: var(--cor2);
+      transform: scale(1.05);
+    }
+    .dashboard {
+      display: none;
+      flex-direction: row;
+      height: 100vh;
+    }
+    .sidebar {
+      background: #111;
+      width: 220px;
+      padding: 20px;
+      border-right: 2px solid var(--cor1);
+    }
+    .sidebar h2 {
+      color: var(--cor1);
+      margin-bottom: 20px;
+    }
+    .sidebar ul {
+      list-style: none;
+    }
+    .sidebar li {
+      padding: 12px;
+      cursor: pointer;
+      transition: 0.3s;
+      border-radius: 8px;
+    }
+    .sidebar li:hover, .sidebar li.active {
+      background-color: #222;
+      color: var(--cor1);
+      border-left: 4px solid var(--cor1);
+    }
+    .main {
+      flex: 1;
+      padding: 30px;
+      overflow-y: auto;
+      position: relative;
+    }
+    .section {
+      display: none;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+    .section.active {
+      display: block;
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .card {
+      background: var(--bg-card);
+      border-radius: 15px;
+      padding: 20px;
+      box-shadow: 0 0 10px rgba(255,106,0,0.2);
+      margin-bottom: 20px;
+    }
+    .chatbot {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: var(--bg-card);
+      border-radius: 20px;
+      padding: 15px;
+      width: 280px;
+      box-shadow: 0 0 10px rgba(255,106,0,0.4);
+      display: flex;
+      flex-direction: column;
+    }
+    .chatbot h4 { margin-bottom: 10px; color: var(--cor1); }
+    .chat-window {
+      flex: 1;
+      overflow-y: auto;
+      max-height: 200px;
+      margin-bottom: 10px;
+    }
+    .chat-message {
+      background: #2a2a2a;
+      margin: 5px 0;
+      padding: 8px 10px;
+      border-radius: 10px;
+      font-size: 14px;
+    }
+    .chat-message.user {
+      background: var(--cor1);
+      color: white;
+      align-self: flex-end;
+      text-align: right;
+    }
+    .chatbot input {
+      padding: 8px;
+      border-radius: 8px;
+      border: none;
+      background: #333;
+      color: white;
+      width: 100%;
+    }
+    .fab {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      width: 60px;
+      height: 60px;
+      background: var(--cor1);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      color: white;
+      box-shadow: 0 0 10px rgba(255,106,0,0.6);
+      cursor: pointer;
+      transition: transform 0.3s;
+    }
+    .fab:hover {
+      transform: scale(1.1);
+    }
+    .notif {
+      background: var(--cor1);
+      padding: 12px;
+      border-radius: 12px;
+      margin-bottom: 15px;
+      color: white;
+      animation: fadein 1s ease;
+    }
+    .profile {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .profile img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      margin-right: 12px;
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-animated"></div>
+
+  <!-- LOGIN -->
+  <div class="login-container" id="login">
+    <div class="login-box">
+      <h1>Banco Ultra</h1>
+      <input type="text" id="user" placeholder="Usuário">
+      <input type="password" id="pass" placeholder="Senha">
+      <button onclick="login()">Entrar</button>
+    </div>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div class="dashboard" id="dashboard">
+    <div class="sidebar">
+      <h2>💳 Ultra</h2>
+      <ul>
+        <li class="active" onclick="showSection('inicio', this)">Início</li>
+        <li onclick="showSection('cartoes', this)">Cartões</li>
+        <li onclick="showSection('pagamentos', this)">Pagamentos</li>
+        <li onclick="showSection('criptos', this)">Criptomoedas</li>
+        <li onclick="showSection('investimentos', this)">Investimentos</li>
+        <li onclick="showSection('configuracoes', this)">Configurações</li>
+      </ul>
+    </div>
+    <div class="main">
+      <div class="notif">🔔 Bem-vindo de volta!</div>
+      <div class="profile">
+        <img id="avatar" src="https://i.pravatar.cc/100" alt="Avatar">
+        <div>
+          <strong>Olá, Usuário!</strong><br>
+          Conta: 0001234-5<br>
+          <input type="file" id="uploadPhoto" style="display:none" accept="image/*" onchange="changePhoto(event)">
+          <button onclick="document.getElementById('uploadPhoto').click()" style="margin-top:8px; padding:6px 12px; border:none; background:var(--cor1); color:white; border-radius:8px; cursor:pointer;">Alterar Foto</button>
+        </div>
+      </div>
+      <div id="inicio" class="section active">
+        <div class="card">Bem-vindo! Seu saldo atual é <strong>R$ 8.950,00</strong></div>
+        <div class="card">
+          <h3>Extrato</h3>
+          <ul>
+            <li>Pix recebido - R$ 500,00</li>
+            <li>Transferência enviada - R$ 120,00</li>
+            <li>Compra cartão - R$ 230,00</li>
+          </ul>
+        </div>
+      </div>
+      <div id="cartoes" class="section">
+        <div class="card">Cartão Platinum - Limite R$ 12.000,00</div>
+      </div>
+      <div id="pagamentos" class="section">
+        <div class="card">
+          <h3>Realizar Pagamento</h3>
+          <input type="text" placeholder="Chave Pix ou código de barras" style="width: 100%; padding: 10px; border-radius: 8px; margin-top: 10px;">
+          <button style="margin-top: 10px; padding: 10px 20px; border: none; border-radius: 10px; background: var(--cor1); color: white; cursor: pointer;" onmouseover="this.style.background=var(--cor2)" onmouseout="this.style.background=var(--cor1)">Pagar</button>
+        </div>
+      </div>
+      <div id="criptos" class="section">
+        <div class="card">
+          <canvas id="cryptoChart" height="100"></canvas>
+        </div>
+      </div>
+      <div id="investimentos" class="section">
+        <div class="card">
+          <h3>Rendimento CDI</h3>
+          <div style="background:#333; border-radius:10px; overflow:hidden;">
+            <div style="width:70%; background:var(--cor1); padding:10px; text-align:center;">70%</div>
+          </div>
+        </div>
+      </div>
+      <div id="configuracoes" class="section">
+        <div class="card">
+          <label>Notificações
+            <label class="switch">
+              <input type="checkbox" checked>
+              <span class="slider"></span>
+            </label>
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CHATBOT -->
+  <div class="chatbot">
+    <h4>Atendimento</h4>
+    <div class="chat-window" id="chatWindow"></div>
+    <input type="text" id="chatInput" placeholder="Digite sua dúvida..." onkeypress="if(event.key==='Enter')sendMessage()">
+  </div>
+
+  <!-- FAB -->
+  <div class="fab" onclick="alert('Nova transação iniciada!')">+</div>
+
+  <!-- SCRIPT -->
+  <script>
+    window.onload = () => {
+      const saved = localStorage.getItem('avatar');
+      if (saved) document.getElementById('avatar').src = saved;
+    };
+
+    function login() {
+      const user = document.getElementById('user').value;
+      const pass = document.getElementById('pass').value;
+      if(user && pass) {
+        document.getElementById('login').style.display = 'none';
+        document.getElementById('dashboard').style.display = 'flex';
+        drawChart();
+      } else {
+        alert("Preencha todos os campos");
+      }
+    }
+
+    function showSection(id, el) {
+      document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+      document.querySelectorAll('.sidebar li').forEach(i => i.classList.remove('active'));
+      el.classList.add('active');
+    }
+
+    function drawChart() {
+      const canvas = document.getElementById('cryptoChart');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+      gradient.addColorStop(0, 'rgba(255,106,0,0.6)');
+      gradient.addColorStop(1, 'rgba(255,106,0,0)');
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: ['BTC', 'ETH', 'SOL', 'ADA'],
+          datasets: [{
+            label: 'Valores em R$',
+            data: [29000, 14500, 310, 1.25],
+            backgroundColor: gradient,
+            borderColor: 'rgba(255,106,0,1)',
+            borderWidth: 1
+          }]
+        },
+        options: {
+          plugins: { legend: { labels: { color: '#fff' } } },
+          scales: {
+            x: { ticks: { color: '#fff' } },
+            y: { ticks: { color: '#fff' } }
+          }
+        }
+      });
+    }
+
+    function changePhoto(event) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          document.getElementById('avatar').src = e.target.result;
+          localStorage.setItem('avatar', e.target.result);
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function sendMessage() {
+      const input = document.getElementById("chatInput");
+      const message = input.value.trim();
+      if (!message) return;
+
+      const chatWindow = document.getElementById("chatWindow");
+
+      const userMsg = document.createElement("div");
+      userMsg.className = "chat-message user";
+      userMsg.innerText = message;
+      chatWindow.appendChild(userMsg);
+
+      input.value = "";
+
+      setTimeout(() => {
+        const botMsg = document.createElement("div");
+        botMsg.className = "chat-message";
+        botMsg.innerText = respostaBot(message);
+        chatWindow.appendChild(botMsg);
+        chatWindow.scrollTop = chatWindow.scrollHeight;
+      }, 600);
+    }
+
+    function respostaBot(msg) {
+      msg = msg.toLowerCase();
+      if (msg.includes("saldo")) return "Seu saldo é R$ 8.950,00.";
+      if (msg.includes("cartão")) return "Você possui um cartão Platinum com limite de R$ 12.000,00.";
+      if (msg.includes("pix")) return "Você pode fazer Pix na aba 'Pagamentos'.";
+      return "Desculpe, não entendi. Tente reformular sua pergunta.";
+    }
+  </script>
+</body>
+</html>
