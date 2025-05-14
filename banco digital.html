@@ -268,10 +268,19 @@
       </div>
       <div id="pagamentos" class="section">
         <div class="card">
-          <h3>Realizar Pagamento</h3>
-          <input type="text" placeholder="Chave Pix ou código de barras" style="width: 100%; padding: 10px; border-radius: 8px; margin-top: 10px;">
-          <button style="margin-top: 10px; padding: 10px 20px; border: none; border-radius: 10px; background: var(--cor1); color: white; cursor: pointer;" onmouseover="this.style.background=var(--cor2)" onmouseout="this.style.background=var(--cor1)">Pagar</button>
-        </div>
+  <h3>Enviar Pix</h3>
+  <input type="text" id="chavePix" placeholder="Chave Pix" value="ultra@pix.com" style="width: 100%; padding: 10px; border-radius: 8px; margin-top: 10px;">
+  <input type="number" id="valorPix" placeholder="Valor (R$)" style="width: 100%; padding: 10px; border-radius: 8px; margin-top: 10px;">
+  <button style="margin-top: 10px; padding: 10px 20px; border: none; border-radius: 10px; background: var(--cor1); color: white; cursor: pointer;"
+          onclick="enviarPix()">Enviar Pix</button>
+  <div id="confirmacaoPix" style="margin-top: 15px; color: var(--cor1); display: none;"></div>
+</div>
+
+<div class="card">
+  <h3>Histórico de Saldo</h3>
+  <canvas id="saldoChart" height="100"></canvas>
+</div>
+
       </div>
       <div id="criptos" class="section">
         <div class="card">
@@ -348,7 +357,7 @@
           labels: ['BTC', 'ETH', 'SOL', 'ADA'],
           datasets: [{
             label: 'Valores em R$',
-            data: [29000, 14500, 310, 1.25],
+            data: [29000, 14500, 22333, 1.25],
             backgroundColor: gradient,
             borderColor: 'rgba(255,106,0,1)',
             borderWidth: 1
@@ -406,6 +415,6 @@
       if (msg.includes("pix")) return "Você pode fazer Pix na aba 'Pagamentos'.";
       return "Desculpe, não entendi. Tente reformular sua pergunta.";
     }
-  </script>
+</script>
 </body>
 </html>
